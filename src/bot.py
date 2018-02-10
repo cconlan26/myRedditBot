@@ -3,8 +3,8 @@ import pdb
 import re
 import os
 
-header = '**Recipe found using mentioned ingredients**\n'
-footer = '\n*---This recipe was found from https://spoonacular.com/food-api | Bot created by u/cconlan26 | [Source code](https://github.com/cconlan26/recipeBot)*'
+header = '**Recipe found using the mentioned ingredients:**\n'
+footer = '\n*---This recipe was found from API_LINK | Bot created by u/cconlan26 | [Source code](https://github.com/cconlan26/recipeBot)*'
 
 
 def reply():
@@ -39,6 +39,8 @@ def reply():
                 body = ', '.join(ingredients) + "\n"
 
                 # Now we need to use the spoonacular api to find recipes
+                #TODO: use api to get body
+
 
                 # Replying to comment
                 comment.reply(header + body + footer)
