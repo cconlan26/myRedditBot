@@ -69,8 +69,8 @@ def reply():
                     print(firstRecipe)
                     label = firstRecipe['label']
                     url = firstRecipe["url"]
-                    body = "\n The recipe we have found is " + label + "\n"
-                    body += "Link to recipe: " + url + "\n"
+                    body = "\n The recipe we have found is " + label + "."
+                    body += "\n Link to recipe: " + url + "\n"
                     # Replying to comment
                     comment.reply(header + ingredientsList + "**\n" + body + footer)
                     # Adding the comment id to the list
