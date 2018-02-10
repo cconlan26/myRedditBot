@@ -3,27 +3,49 @@ import pdb
 import re
 import os
 
+header = '**Recipe found using mentioned ingredients**\n'
+footer = '\n*---This recipe was found from https://spoonacular.com/food-api | Bot created by u/cconlan26 | [Source code](https://github.com/cconlan26/recipeBot)*'
+
 
 def reply():
 
+    # Authenticating
     reddit = praw.Reddit('bot1')
+
+    # subreddit that the bot is monitering
     subreddit = reddit.subreddit("pythonforengineers")
 
-    if not os.path.isfile("postIdHistory.txt"):
-        postIdHistory = []
+    # If text file doesn't exist
+    if not os.path.isfile("commentIdHistory.txt"):
+        commentIdHistory = []
     else:
-        with open("postIdHistory.txt") as f:
-            postIdHistory = f.read()
-            postIdHistory = postIdHistory.split("\n")
-            postIdHistory = list(filter(None, postIdHistory))
+        with open("commentIdHistory.txt") as f:
+            commentIdHistory = f.read()
+            commentIdHistory = commentIdHistory.split("\n")
+            commentIdHistory = list(filter(None, commentIdHistory))
 
-    for submission in subreddit.hot(limit=5):
-        if submission.id not in posts_replied_to:
-            if re.search("testing bot replying", submission.title, re.IGNORECASE):
-                submission.reply("replying to this")
-                print("Bot replying to: " + submission.title)
-                postIdHistory.append(submission.id)
+    # For every 250 comments in the subreddit
+    for comment in subreddit.comments(limit = 250):
 
-        with open("postIdHistory.txt", "w") as f:
-            for post_id in postIdHistory:
-                f.write(post_id + "\n")
+        if comment.id not in commentIdHistory:
+            # Using regex to check if the body contains the phrase with a list of following ingredients
+            if re.match("Find me a recipe with [a-zA-Z]+\s*(,\s*[a-zA-Z]+\s*)*", comment.body):
+
+                # Need to tokenize the ingredients
+                ingredients = comment.body.split("Find me a recipe with ")[1]
+                ingredients = ingredients.split("\s*,\s*")
+
+                # Converting the ingredients list into a readable format
+                body = ', '.join(ingredients) + "\n"
+
+                # Now we need to use the spoonacular api to find recipes
+
+                # Replying to comment
+                comment.reply(header + body + footer)
+
+                # Adding the comment id to the list
+                commentIdHistory.append(comment.id)
+
+    with open("commentIdHistory.txt", "w") as f:
+        for post_id in commentIdHistory:
+            f.write(post_id + "\n")
