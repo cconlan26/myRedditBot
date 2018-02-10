@@ -38,4 +38,4 @@ Thumbs.db
 
 #praw
 praw.ini
-postIdHistory.txt
+commentIdHistory.txt
