@@ -3,8 +3,9 @@ import pdb
 import re
 import os
 import httplib2
+import json
 
-header = '**Recipe found using the mentioned ingredients:**\n'
+header = '**Recipe found using the mentioned ingredients: '
 footer = '\n*---This recipe was found from https://developer.edamam.com/edamam-recipe-api | Bot created by u/cconlan26 | [Source code](https://github.com/cconlan26/recipeBot)*'
 
 def reply():
@@ -49,18 +50,26 @@ def reply():
                 ingredients = ingredients.split("\s*,\s*")
 
                 # Converting the ingredients list into a readable format
-                ingredientsList = ', '.join(ingredients) + "\n"
-
+                ingredientsList = ','.join(ingredients)
+                print(ingredientsList)
                 # Now we need to use the edamam api to find recipes
-                resp, content = httplib2.Http().request("https://api.edamam.com/search?q=" + ingredientsList + "&app_id=${" + app_id + "&app_key=${" + application_key + "}")
+                resp, content = httplib2.Http().request("https://api.edamam.com/search?q=" + ingredientsList + "&app_id=" + app_id + "&app_key=" + application_key)
 
-                if (resp)
+                # Converting content to json
+                #content = json.loads(content)
 
-                # Replying to comment
-                comment.reply(header + ingredientsList + footer)
-
-                # Adding the comment id to the list
-                commentIdHistory.append(comment.id)
+                if content[5] > 0:
+                    print("results found!")
+                    hits = content["hits"]
+                    first = hits[0]
+                    label = first["label"]
+                    url = first["url"]
+                    body = "The recipe we have found is " + label + "\n"
+                    body += "Link to recipe: " + url + "\n"
+                    # Replying to comment
+                    comment.reply(header + ingredientsList + "**\n" + body + footer)
+                    # Adding the comment id to the list
+                    commentIdHistory.append(comment.id)
 
     with open("commentIdHistory.txt", "w") as f:
         for post_id in commentIdHistory:
