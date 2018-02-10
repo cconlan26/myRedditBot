@@ -2,10 +2,10 @@ import praw
 import pdb
 import re
 import os
+import httplib2
 
 header = '**Recipe found using the mentioned ingredients:**\n'
-footer = '\n*---This recipe was found from API_LINK | Bot created by u/cconlan26 | [Source code](https://github.com/cconlan26/recipeBot)*'
-
+footer = '\n*---This recipe was found from https://developer.edamam.com/edamam-recipe-api | Bot created by u/cconlan26 | [Source code](https://github.com/cconlan26/recipeBot)*'
 
 def reply():
 
@@ -14,6 +14,19 @@ def reply():
 
     # subreddit that the bot is monitering
     subreddit = reddit.subreddit("pythonforengineers")
+
+
+    # if apiKeys text file doesn't exist
+    if not os.path.isfile("apiKeys.txt"):
+        app_id = ""
+        application_key = ""
+    else:
+        with open("apiKeys.txt") as f:
+            keys = f.read()
+            keys = keys.split("\n")
+            app_id = keys[0]
+            application_key = keys[1]
+
 
     # If text file doesn't exist
     if not os.path.isfile("commentIdHistory.txt"):
@@ -36,14 +49,15 @@ def reply():
                 ingredients = ingredients.split("\s*,\s*")
 
                 # Converting the ingredients list into a readable format
-                body = ', '.join(ingredients) + "\n"
+                ingredientsList = ', '.join(ingredients) + "\n"
 
-                # Now we need to use the spoonacular api to find recipes
-                #TODO: use api to get body
+                # Now we need to use the edamam api to find recipes
+                resp, content = httplib2.Http().request("https://api.edamam.com/search?q=" + ingredientsList + "&app_id=${" + app_id + "&app_key=${" + application_key + "}")
 
+                if (resp)
 
                 # Replying to comment
-                comment.reply(header + body + footer)
+                comment.reply(header + ingredientsList + footer)
 
                 # Adding the comment id to the list
                 commentIdHistory.append(comment.id)

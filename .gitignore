@@ -37,6 +37,8 @@
 ehthumbs.db
 Thumbs.db
 
-#praw
+# User files #
+##############
 praw.ini
 commentIdHistory.txt
+apiKeys.txt

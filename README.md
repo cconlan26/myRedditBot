@@ -5,7 +5,7 @@ e.g.
 
 "Find me a recipe with chicken and potato"
 
-
+Uses https://developer.edamam.com/edamam-recipe-api to find a recipe
 
 cron tab examples:
 https://www.thegeekstuff.com/2009/06/15-practical-crontab-examples/
