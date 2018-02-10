@@ -48,6 +48,8 @@ def reply():
     for comment in subreddit.comments(limit = 250):
 
         if comment.id not in commentIdHistory:
+
+            # TODO: better regex
             # Using regex to check if the body contains the phrase with a list of following ingredients
             if re.match("Find me a recipe with [a-zA-Z]+\s*(,\s*[a-zA-Z]+\s*)*", comment.body):
 
@@ -62,9 +64,11 @@ def reply():
                 r = requests.get("https://api.edamam.com/search?q=" + ingredientsList + "&app_id=" + app_id + "&app_key=" + application_key)
                 content = r.json()
 
+                # If a result using the listed ingredients found
                 if content["count"] > 0:
                     print("results found!")
                     hits = content["hits"]
+                    # Getting the first result
                     firstRecipe = hits[0]["recipe"]
                     print(firstRecipe)
                     label = firstRecipe['label']
