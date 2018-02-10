@@ -1,2 +1,2 @@
 praw
-httplib2
+requests

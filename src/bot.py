@@ -2,11 +2,11 @@ import praw
 import pdb
 import re
 import os
-import httplib2
 import json
+import requests
 
 header = '**Recipe found using the mentioned ingredients: '
-footer = '\n*---This recipe was found from https://developer.edamam.com/edamam-recipe-api | Bot created by u/cconlan26 | [Source code](https://github.com/cconlan26/recipeBot)*'
+footer = '\n*---This recipe search was powered by https://developer.edamam.com/edamam-recipe-api | Bot created by u/cconlan26 | [Source code](https://github.com/cconlan26/recipeBot)*'
 
 def reply():
 
@@ -27,6 +27,12 @@ def reply():
             keys = keys.split("\n")
             app_id = keys[0]
             application_key = keys[1]
+
+
+    #TODO: DELETE
+    r = requests.get("https://api.edamam.com/search?q=chicken&app_id=" + app_id + "&app_key=" + application_key)
+    content = r.json()
+
 
 
     # If text file doesn't exist
@@ -51,20 +57,19 @@ def reply():
 
                 # Converting the ingredients list into a readable format
                 ingredientsList = ','.join(ingredients)
-                print(ingredientsList)
+
                 # Now we need to use the edamam api to find recipes
-                resp, content = httplib2.Http().request("https://api.edamam.com/search?q=" + ingredientsList + "&app_id=" + app_id + "&app_key=" + application_key)
+                r = requests.get("https://api.edamam.com/search?q=" + ingredientsList + "&app_id=" + app_id + "&app_key=" + application_key)
+                content = r.json()
 
-                # Converting content to json
-                #content = json.loads(content)
-
-                if content[5] > 0:
+                if content["count"] > 0:
                     print("results found!")
                     hits = content["hits"]
-                    first = hits[0]
-                    label = first["label"]
-                    url = first["url"]
-                    body = "The recipe we have found is " + label + "\n"
+                    firstRecipe = hits[0]["recipe"]
+                    print(firstRecipe)
+                    label = firstRecipe['label']
+                    url = firstRecipe["url"]
+                    body = "\n The recipe we have found is " + label + "\n"
                     body += "Link to recipe: " + url + "\n"
                     # Replying to comment
                     comment.reply(header + ingredientsList + "**\n" + body + footer)
